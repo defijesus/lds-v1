@@ -1,3 +1,41 @@
+# The Last Degen Standing
+
+TD;CR (Too Degen; Can't Read)
+
+STEP 1 - JOIN THE GAME
+STEP 2 - START THE GAME (or wait for someone to start it for u)
+STEP 3 - SAY GM EVERY 24 HOURS OR LESS
+STEP 4 - DON'T GET DELETED
+STEP 5 - WIN
+|-----------------------------------------------------------------------------|
+
+Rules are simple. 1 Player = 1 Degen = 1 Address = 1 Owner of a Soulbound NFT
+
+Each Degen pays for the ticket to join the game. The ticket funds the prize pool minus a fee to the creator.
+
+If a degen invites another degen, the first degen also collects a small fee from the ticket payment.
+
+After no more degens join the game for a while, anyone can start the game.
+
+When the game starts, EACH DEGEN HAS TO CALL THE GM FUNCTION BEFORE THE TIMER ENDS. Else they can, and WILL, be deleted.
+
+The timer starts at 24 hours and decreases by 1 hour every day. After 24 days the timer stays constant at 1 hour.
+
+This means that after 24 hours, you have 1 hour to call the gm function again, if you don't another degen can game over you.
+
+You can say gm for your frens, if they are afk or something.
+
+Deleting a degen pays the hunter a bounty.
+
+If a degen wants to give up he can commit Seppuku and get a partial 10% refund. 
+
+Last degen alive takes all the pooled eth.
+
+good luck & have fun
+
+
+
+
 # Foundry Template [![Open in Gitpod][gitpod-badge]][gitpod] [![Github Actions][gha-badge]][gha] [![Foundry][foundry-badge]][foundry] [![License: MIT][license-badge]][license]
 
 [gitpod]: https://gitpod.io/#https://github.com/defijesus/lds-v1

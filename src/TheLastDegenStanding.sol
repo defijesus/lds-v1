@@ -70,11 +70,11 @@ good luck & have fun
 pragma solidity ^0.8.19;
 
 import { ERC721 } from "solady/tokens/ERC721.sol";
-import { TheParticipationTrophy } from "../TheParticipationTrophy.sol";
-import { Helpers } from "../Helpers.sol";
-import { TLDSMetadata } from "../TLDSMetadata.sol";
-import { DegenPlayers } from "../APlayer.sol";
-import { IERC20 } from "../IERC20.sol";
+import { TheParticipationTrophy } from "./TheParticipationTrophy.sol";
+import { Helpers } from "./Helpers.sol";
+import { TLDSMetadata } from "./TLDSMetadata.sol";
+import { DegenPlayers } from "./APlayer.sol";
+import { IERC20 } from "./IERC20.sol";
 
 /// fees are expressed in bps 1%=100 3%=300 10%=1000 33%=3300
 contract TheLastDegenStanding is ERC721 {
@@ -147,7 +147,7 @@ contract TheLastDegenStanding is ERC721 {
     /// STEP 1 - JOIN THE GAME
 
     function join() public payable {
-        if ($PLAYER_NFT.balanceOf(msg.sender) > 0) {
+        if ($PLAYER_NFT.balanceOf(msg.sender) < 1) {
             revert NOT_PLAYER();
         }
 

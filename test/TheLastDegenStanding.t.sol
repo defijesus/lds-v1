@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.19 <0.9.0;
 
-import { PRBTest } from "@prb/test/PRBTest.sol";
+import { PRBTest } from "@prb/test/src/PRBTest.sol";
 import { console2 } from "forge-std/console2.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
@@ -12,8 +12,6 @@ import { TLDSMetadata } from "../src/TLDSMetadata.sol";
 
 import { IERC20 } from "../src/IERC20.sol";
 
-/// @dev If this is your first time with Forge, read this tutorial in the Foundry Book:
-/// https://book.getfoundry.sh/forge/writing-tests
 contract LDS_Test is PRBTest, StdCheats {
     TheLastDegenStanding internal lds;
     DegenPlayers internal playerNFT;
@@ -24,7 +22,9 @@ contract LDS_Test is PRBTest, StdCheats {
     address internal player2 = address(0xB00B);
     address internal player3 = address(0xB00B13);
     address internal player4 = address(0xB00B135);
+    // player 5 has playerNFT but doesnt have enough $degen
     address internal player5 = address(0xAB00BA);
+    // player 6 doesnt have playerNFT but has enough $degen
     address internal player6 = address(0xAB00BA5);
     uint256 internal ticketPrice;
     IERC20 internal degen;
@@ -60,22 +60,21 @@ contract LDS_Test is PRBTest, StdCheats {
     }
 
     function test_Join() external {
-        joinPlayer(player1, 1);
+        joinPlayer(player1);
         assertEq(lds.ownerOf(0), player1);
-        assertEq(degen.balanceOf(admin), (ticketPrice * lds.$ADMIN_FEE()) / 10_000);
-        assertEq(degen.balanceOf(address(lds)), ticketPrice - ((ticketPrice * lds.$ADMIN_FEE()) / 10_000));
+        assertEq(degen.balanceOf(address(lds)), ticketPrice);
     }
 
     function testFail_JoinWithLowDegenBalance() external {
-        joinPlayer(player5, 5);
+        joinPlayer(player5);
     }
 
     function testFail_JoinWithoutPlayerNFT() external {
-        joinPlayer(player6, 1);
+        joinPlayer(player6);
     }
 
     function testFail_JoinAndTransferToNew() external {
-        joinPlayer(player1, 1);
+        joinPlayer(player1);
         vm.prank(player1);
         lds.transferFrom(player1, player2, 0);
     }
@@ -86,13 +85,13 @@ contract LDS_Test is PRBTest, StdCheats {
     }
 
     function testFail_JoinMultipleTimes() external {
-        joinPlayer(player1, 1);
-        joinPlayer(player1, 1);
+        joinPlayer(player1);
+        joinPlayer(player1);
     }
 
     function testFail_JoinAfterStart() external {
         startGameWithPlayers();
-        joinPlayer(player4, 4);
+        joinPlayer(player4);
     }
 
     function testFail_DeleteDegenMultipleTimes() external {
@@ -110,8 +109,8 @@ contract LDS_Test is PRBTest, StdCheats {
         vm.warp(block.timestamp + 10 minutes);
         uint256 afterTime = block.timestamp;
         vm.prank(player1);
-        lds.gm(0);
-        assertEq(lds.getLastSeen(0), afterTime);
+        lds.gm();
+        assertEq(lds.getLastSeen(player1), afterTime);
     }
 
     function test_GmForFren() external {
@@ -119,8 +118,8 @@ contract LDS_Test is PRBTest, StdCheats {
         vm.warp(block.timestamp + 10 minutes);
         uint256 afterTime = block.timestamp;
         vm.prank(player1);
-        lds.gm(1);
-        assertEq(lds.getLastSeen(1), afterTime);
+        lds.gm();
+        assertEq(lds.getLastSeen(player1), afterTime);
     }
 
     function test_Delete() external {
@@ -215,17 +214,17 @@ contract LDS_Test is PRBTest, StdCheats {
     }
 
     function startGameWithPlayers() internal {
-        joinPlayer(player1, 1);
-        joinPlayer(player2, 2);
-        joinPlayer(player3, 3);
+        joinPlayer(player1);
+        joinPlayer(player2);
+        joinPlayer(player3);
         vm.warp(block.timestamp + lds.$DEGEN_COOLDOWN() + 1 hours);
         lds.startGame();
     }
 
-    function joinPlayer(address player, uint256 playerId) internal {
+    function joinPlayer(address player) internal {
         vm.startPrank(player);
         degen.approve(address(lds), ticketPrice);
-        lds.join(playerId);
+        lds.join();
         vm.stopPrank();
     }
 }
