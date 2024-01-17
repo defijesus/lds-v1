@@ -3,10 +3,15 @@
 TD;CR (Too Degen; Can't Read)
 
 STEP 1 - JOIN THE GAME
+
 STEP 2 - START THE GAME (or wait for someone to start it for u)
+
 STEP 3 - SAY GM EVERY 24 HOURS OR LESS
+
 STEP 4 - DON'T GET DELETED
+
 STEP 5 - WIN
+
 |-----------------------------------------------------------------------------|
 
 Rules are simple. 1 Player = 1 Degen = 1 Address = 1 Owner of a Soulbound NFT
