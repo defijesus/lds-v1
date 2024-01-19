@@ -33,21 +33,30 @@ pragma solidity ^0.8.19;
 import { ITLDS_Metadata } from "./ITLDSMetadata.sol";
 
 contract TLDSMetadata is ITLDS_Metadata {
-    string public $IMAGE_URI = "ipfs://bafybeia5whm6dq5vanhblnnacyx5bqdqdqgsd2ijgtbdnc6k3lmzpvjb3m";
-    string public $TROPHY_URI = "ipfs://bafybeia5whm6dq5vanhblnnacyx5bqdqdqgsd2ijgtbdnc6k3lmzpvjb3m";
+    address public admin = 0xDe30040413b26d7Aa2B6Fc4761D80eb35Dcf97aD;
+    mapping(address => string) public trophyToUri;
+    mapping(address => string) public gametoUri;
 
-    function setImageURI(string calldata imageURI) public {
-        require(msg.sender == 0xDe30040413b26d7Aa2B6Fc4761D80eb35Dcf97aD);
-        $IMAGE_URI = imageURI;
+    function setGameImageURI(address game, string calldata imageURI) public {
+        require(msg.sender == admin);
+        gametoUri[game] = imageURI;
     }
-    function getImageURI(uint256) public view returns (string memory) {
-        return $IMAGE_URI;
+
+    function getGameImageURI(address game, uint256) public view returns (string memory) {
+        return gametoUri[game];
     }
-    function setTrophyURI(string calldata trophyURI) public {
-        require(msg.sender == 0xDe30040413b26d7Aa2B6Fc4761D80eb35Dcf97aD);
-        $TROPHY_URI = trophyURI;
+
+    function setGameTrophyURI(address throphy, string calldata trophyURI) public {
+        require(msg.sender == admin);
+        trophyToUri[throphy] = trophyURI;
     }
-    function getTrophyURI(uint256) public view returns (string memory) {
-        return $TROPHY_URI;
+
+    function getTrophyImageURI(address throphy, uint256) public view returns (string memory) {
+        return trophyToUri[throphy];
+    }
+
+    function gibAdmin(address newAdmin) public {
+        require(msg.sender ==  admin);
+        admin = newAdmin;
     }
 }

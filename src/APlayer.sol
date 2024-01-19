@@ -36,11 +36,14 @@ import { Helpers } from "./Helpers.sol";
 import { IERC20 } from "./IERC20.sol";
 
 contract DegenPlayers is ERC721 {
+    
     uint256 public numPlayers = 1;
     address public admin = 0xDe30040413b26d7Aa2B6Fc4761D80eb35Dcf97aD;
     address public currentGame;
+    string public imageURI;
+
     mapping(uint256 => string) public names;
-    mapping(uint256 => uint256) public gamesPlayed;
+    mapping(address => uint256) public gamesPlayed;
 
     function airdrop(address[] calldata targets) public {
         require(msg.sender == admin);
@@ -58,14 +61,19 @@ contract DegenPlayers is ERC721 {
         admin = newAdmin;
     }
 
-     function setGame(address newGame) public {
+    function setGame(address newGame) public {
         require(msg.sender == admin);
         currentGame = newGame;
     }
 
-    function playedGame(uint256 playerId) public {
+    function setImageURI(string memory newImage) public {
+        require(msg.sender == admin);
+        imageURI = newImage;
+    }
+
+    function playedGame(address player) public {
         require(msg.sender == currentGame);
-        gamesPlayed[playerId]++;
+        gamesPlayed[player]++;
     }
 
     function setName(uint256 playerId, string calldata newName) public {
@@ -92,8 +100,10 @@ contract DegenPlayers is ERC721 {
                         '{"name": "',
                         getName(tokenId),
                         '", "description": "',
-                        getDescription(gamesPlayed[tokenId]),
-                        '", "image": "ipfs://TODO"}'
+                        getDescription(gamesPlayed[super.ownerOf(tokenId)]),
+                        '", "image": "',
+                        imageURI,
+                        '"}'
                     )
                 )
             )
@@ -120,6 +130,14 @@ contract DegenPlayers is ERC721 {
             Helpers.toString(numGames), 
             (numGames == 1 ? ' game.' : ' games.')
         ));
+    }
+
+    function _beforeTokenTransfer(address from, address to, uint256) internal view override {
+        if (from == address(0)) {
+            require(super.balanceOf(to) == 0);
+        } else {
+            require(to == address(0));
+        }
     }
 
 }

@@ -5,7 +5,7 @@ import { PRBTest } from "@prb/test/src/PRBTest.sol";
 import { console2 } from "forge-std/console2.sol";
 import { StdCheats } from "forge-std/StdCheats.sol";
 
-import { TheLastDegenStanding } from "../src/TheLastDegenStanding.sol";
+import { TheLastDegenStanding } from "../src/TheLastDegenStandingNoConstructor.sol";
 import { TheParticipationTrophy } from "../src/TheParticipationTrophy.sol";
 import { DegenPlayers } from "../src/APlayer.sol";
 import { TLDSMetadata } from "../src/TLDSMetadata.sol";
@@ -16,6 +16,8 @@ contract LDS_Test is PRBTest, StdCheats {
     TheLastDegenStanding internal lds;
     DegenPlayers internal playerNFT;
     TLDSMetadata internal metadata;
+    TheParticipationTrophy internal trophy;
+
     address internal degenWhale = 0x3C12B77aE8B7DD1FEB63D1D6a2A819AcdA0a41d2;
     address internal admin = 0xDe30040413b26d7Aa2B6Fc4761D80eb35Dcf97aD;
     address internal player1 = address(0xB0B);
@@ -30,12 +32,16 @@ contract LDS_Test is PRBTest, StdCheats {
     IERC20 internal degen;
 
     function setUp() public virtual {
-        vm.createSelectFork(vm.rpcUrl('baldchain'), 9145663);
-        playerNFT = new DegenPlayers();
-        metadata = new TLDSMetadata();
-        lds = new TheLastDegenStanding(address(playerNFT), address(metadata));
-        vm.prank(admin);
+        vm.createSelectFork(vm.rpcUrl('baldchain'), 9442618);
+        playerNFT = DegenPlayers(0x2DD58BeDC4A91110Bf9aF1d2bc3f13966d1C6643);
+        metadata = TLDSMetadata(0xdfbE5E621A70873455b4435306a03d9eA1e3f2ad);
+        trophy = TheParticipationTrophy(0x0DcDA7E9e5c5Ecd43bf047eA39B9833C3f42BA11);
+        lds = TheLastDegenStanding(0xe16026F101077254a133CD882035F9A8e6f8C8E0);
+        require(lds.$ADMIN() == 0xDe30040413b26d7Aa2B6Fc4761D80eb35Dcf97aD);
+        vm.startPrank(admin);
+        trophy.setMinter(address(lds));
         playerNFT.setGame(address(lds));
+        vm.stopPrank();
         ticketPrice = lds.$TICKET_PRICE();
         degen = lds.$DEGEN();
 
@@ -113,15 +119,6 @@ contract LDS_Test is PRBTest, StdCheats {
         assertEq(lds.getLastSeen(player1), afterTime);
     }
 
-    function test_GmForFren() external {
-        startGameWithPlayers();
-        vm.warp(block.timestamp + 10 minutes);
-        uint256 afterTime = block.timestamp;
-        vm.prank(player1);
-        lds.gm();
-        assertEq(lds.getLastSeen(player1), afterTime);
-    }
-
     function test_Delete() external {
         startGameWithPlayers();
         vm.warp(block.timestamp + 48 hours);
@@ -168,7 +165,6 @@ contract LDS_Test is PRBTest, StdCheats {
 
     function testFail_StealWin() external {
         startGameWithPlayers();
-        uint256 balanceBefore = degen.balanceOf(address(lds));
         vm.warp(block.timestamp + 48 hours);
         vm.startPrank(player1);
         uint256[] memory players = new uint256[](2);
@@ -180,6 +176,7 @@ contract LDS_Test is PRBTest, StdCheats {
     }
 
     function test_PrintTokenUris() external {
+        emit LogNamedString("playerNFT before game", playerNFT.tokenURI(1));
         startGameWithPlayers();
         string memory tokenUri = lds.tokenURI(0);
         emit LogNamedString("before ending game", tokenUri);
@@ -193,23 +190,34 @@ contract LDS_Test is PRBTest, StdCheats {
         tokenUri = lds.tokenURI(0);
         emit LogNamedString("after ending game", tokenUri);
         tokenUri = lds.$THE_PARTICIPATION_TROPHY().tokenURI(1);
-        emit LogNamedString("first part trophy", tokenUri);
+        emit LogNamedString("first loser trophy", tokenUri);
         tokenUri = lds.$THE_PARTICIPATION_TROPHY().tokenURI(2);
-        emit LogNamedString("second part trophy", tokenUri);
+        emit LogNamedString("second loser trophy", tokenUri);
+        tokenUri = playerNFT.tokenURI(1);
+        emit LogNamedString("playerNFT after game", tokenUri);
+        /// uncomment the next line and run forge test -vvv to easily see the trace of this test
+        ///tokenUri = playerNFT.tokenURI(999999);
     }
 
-    function testGmFrequency() internal {
+    function test_MyNextGmInHours() external {
         startGameWithPlayers();
+        vm.warp(block.timestamp + 1 hours);
+        assertEq(lds.myNextGmInHours(player1), 23);
+    }
+
+    function test_GmFrequency() external {
+        startGameWithPlayers();
+        uint256 startingTimestamp = block.timestamp;
         assertEq(lds.getGmFrequency(), 1 days);
-        vm.warp(block.timestamp + 1 days);
+        vm.warp(startingTimestamp + 1 days);
         assertEq(lds.getGmFrequency(), 1 days - 1 hours);
-        vm.warp(block.timestamp + 10 days);
+        vm.warp(startingTimestamp+ 10 days);
         assertEq(lds.getGmFrequency(), 1 days - 10 hours);
-        vm.warp(block.timestamp + 23 days);
+        vm.warp(startingTimestamp + 23 days);
         assertEq(lds.getGmFrequency(), 1 days - 23 hours);
-        vm.warp(block.timestamp + 24 days);
+        vm.warp(startingTimestamp + 24 days);
         assertEq(lds.getGmFrequency(), 1 hours);
-        vm.warp(block.timestamp + 50 days);
+        vm.warp(startingTimestamp + 50 days);
         assertEq(lds.getGmFrequency(), 1 hours);
     }
 

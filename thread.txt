@@ -1,0 +1,44 @@
+introducing The Last Degen Standing (TLDS)
+TLDS is a game to test your degenerate skills and 100x your $degen stack
+degens are famous for being online 24/7, TLDS is a game to figure out who is the most online degen on farcaster
+
+in this round, only pre-registered degens are allowed to play
+if you submitted your wallet in @defijesus thread, check your wallet :)
+you should have a soulbound Player NFT that allows you to join the game
+
+Too Degen; Can't Read;
+(1) go to https://basescan.org/address/0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed#writeContract#F1
+(2) connect your wallet
+(3) in the 'address' field input the TLDS game address (0xe16026F101077254a133CD882035F9A8e6f8C8E0)
+(4) in the 'value' field input 500000000000000000000000 (this is 500k + 18 zeros for token decimals)
+(5) click write, you are now ready to join the game
+(6) go to https://basescan.org/address/0xe16026f101077254a133cd882035f9a8e6f8c8e0#writeContract#F5 and call the 5.join function, you are now in the game!
+(7) call the 4.gm function at https://basescan.org/address/0xe16026f101077254a133cd882035f9a8e6f8c8e0#writeContract#F4 before the timer runs out
+(8) check how many hours you have left to say gm again by calling 21.myNextGmInHours function at https://basescan.org/address/0xe16026f101077254a133cd882035f9a8e6f8c8e0#readContract#F21
+(9) if you don't say gm before the timer ends, you will be removed from the game
+(10) ?????
+(11) if you're the last degen standing, call the 13.win function at https://basescan.org/address/0xe16026f101077254a133cd882035f9a8e6f8c8e0#writeContract#F13 and rake in 40+ Million $degen 
+
+now for a longer form explanation
+the rules of the game are simple
+
+each degen pays for the ticket to join the game
+the ticket funds the prize pool minus a 2% fee to the creators.
+
+if no degens join the game for 24 hours, the game starts
+
+after the game starts, EACH DEGEN HAS TO CALL THE GM FUNCTION BEFORE THE TIMER ENDS
+if they don't, they will be deleted and lose all their pooled $degen
+
+the timer starts at 24 hours and decreases by 1 hour every day
+after 24 days the timer stays constant at 1 hour
+
+this means that after 24 days of gameplay, each degen has 1 hour to call the gm function again, if they don't another degen can remove them from the game
+
+deleting a degen pays a bounty to the hunter, 10% of the ticket price of each degen deleted
+
+if a degen wants to give up, he can commit Seppuku and get a 10% refund of their ticket price 
+
+last degen alive takes *all* the pooled $degen
+
+sounds good? check the degen proof instructions above to get started

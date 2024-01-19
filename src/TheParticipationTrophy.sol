@@ -41,29 +41,26 @@ interface ITLDS {
 }
 
 contract TheParticipationTrophy is ERC721 {
-    address public immutable $MINTER;
+    address public $MINTER;
+    address public $ADMIN;
     uint256 public $DEGEN_COUNT;
 
-    bool internal $FIRST_MINT = true;
     uint256 internal $DEGENS_SEEN;
+    bool internal $FIRST_MINT = true;
 
     mapping(uint256 tokenId => uint256 deletedTimestamp) public $WEN_PLAYER_DELETED;
     mapping(uint256 tokenId => uint256 standing) public $DEGEN_STANDINGS;
 
     error NOT_MINTER();
 
-    modifier onlyMinter {
+    constructor () {
+        $ADMIN = msg.sender;
+    }
+
+    function mint(address to, uint256 tokenId) public {
         if (msg.sender != $MINTER) {
             revert NOT_MINTER();
         }
-        _;
-    }
-
-    constructor() {
-        $MINTER = msg.sender;
-    }
-
-    function mint(address to, uint256 tokenId) public onlyMinter {
         if ($FIRST_MINT) {
             $DEGEN_COUNT = ITLDS($MINTER).$DEGENS_ALIVE();
             $FIRST_MINT = false;
@@ -72,6 +69,16 @@ contract TheParticipationTrophy is ERC721 {
         $WEN_PLAYER_DELETED[tokenId] = block.timestamp;
         $DEGENS_SEEN++;
         super._safeMint(to, tokenId);
+    }
+
+    function setMinter(address newMinter) public {
+        require(msg.sender ==  $ADMIN);
+        $MINTER = newMinter;
+    }
+
+    function gibAdmin(address newAdmin) public {
+        require(msg.sender ==  $ADMIN);
+        $ADMIN = newAdmin;
     }
 
     /// ERC721 stuffs
@@ -91,7 +98,7 @@ contract TheParticipationTrophy is ERC721 {
         uint256 degenDeleted = $WEN_PLAYER_DELETED[tokenId];
         uint256 daysPlayed = (degenDeleted - gameStart) / 86400;
         uint256 place = $DEGEN_STANDINGS[tokenId];
-        string memory imageURI = ITLDS($MINTER).$TLDS_METADATA().getTrophyURI(tokenId);
+        string memory imageURI = ITLDS($MINTER).$TLDS_METADATA().getTrophyImageURI(address(this), tokenId);
         string memory json = Helpers.encode(
             bytes(
                 string(

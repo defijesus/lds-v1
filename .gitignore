@@ -7,6 +7,7 @@ out
 # files
 *.env
 *.log
+.stuff.txt
 .DS_Store
 .pnp.*
 lcov.info

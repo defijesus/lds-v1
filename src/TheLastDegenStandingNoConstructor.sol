@@ -88,17 +88,17 @@ contract TheLastDegenStanding is ERC721 {
     IERC20 public constant $DEGEN = IERC20(0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed);
 
     /// immutable
-    TheParticipationTrophy public immutable $THE_PARTICIPATION_TROPHY;
-    DegenPlayers public immutable $PLAYER_NFT;
+    TheParticipationTrophy public $THE_PARTICIPATION_TROPHY = TheParticipationTrophy(0x0DcDA7E9e5c5Ecd43bf047eA39B9833C3f42BA11);
+    DegenPlayers public $PLAYER_NFT = DegenPlayers(0x2DD58BeDC4A91110Bf9aF1d2bc3f13966d1C6643);
     
     /// timestamps
-    uint256 public $LAST_DEGEN_IN;
+    uint256 public $LAST_DEGEN_IN = block.timestamp;
     uint256 public $GAME_STARTED;
 
     uint256 public $DEGENS_ALIVE;
-    address public $ADMIN;
+    address public $ADMIN = 0xDe30040413b26d7Aa2B6Fc4761D80eb35Dcf97aD;
     address public $WINNER;
-    TLDSMetadata public $TLDS_METADATA;
+    TLDSMetadata public $TLDS_METADATA =  TLDSMetadata(0xdfbE5E621A70873455b4435306a03d9eA1e3f2ad);
 
     mapping(address player => uint256 timestamp) public $LAST_SEEN;
 
@@ -135,14 +135,6 @@ contract TheLastDegenStanding is ERC721 {
             revert NOT_ADMIN();
         }
         _;
-    }
-
-    constructor(address playerNFT, address metadata, address participationTrophy) {
-        $ADMIN = msg.sender;
-        $PLAYER_NFT = DegenPlayers(playerNFT);
-        $THE_PARTICIPATION_TROPHY = TheParticipationTrophy(participationTrophy);
-        $TLDS_METADATA = TLDSMetadata(metadata);
-        $LAST_DEGEN_IN = block.timestamp;
     }
 
     /// STEP 1 - JOIN THE GAME
